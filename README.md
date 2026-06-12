@@ -1,104 +1,129 @@
-# Minimal
+# Minimal v1.2
 
-Invisible Desktop Tweak for Windows. Renames Desktop shortcuts to zero-width invisible names without moving icons.
+**Tweak para deixar sua Área de Trabalho do Windows minimalista.**
+Renomeia atalhos (`.lnk`, `.url`, `.appref-ms`) para nomes invisíveis,
+mantendo os ícones intactos.
+
+> Sem dependências externas. Não requer administrador. Apenas Python 3.10+.
 
 ---
 
-## PT-BR
+## ✨ Destaques desta versão
 
-Renomeia os atalhos da Área de Trabalho com caracteres invisíveis, sem mover os ícones.
+- **Sem mexer em ícones.** O script apenas renomeia o arquivo. Nada de
+  reescrever `IconLocation` ou invalidar o cache do Explorer — o ícone
+  exibido continua exatamente o mesmo.
+- **Sem persistência.** Não escreve em `HKCU\...\Run`, não cria tarefa
+  agendada e não fica em segundo plano. Você roda quando quiser.
+  Entradas antigas de versões anteriores são removidas automaticamente.
+- **Backup seguro e estável.** Cada atalho é salvo uma única vez com
+  nome e extensão originais; novos atalhos são adicionados sem
+  reescrever os antigos.
+- **Log silencioso.** Por padrão tudo aparece só no terminal.
+  O arquivo `minimal_<uid>.log` é criado **somente** se ocorrer
+  erro ou conflito, e é apagado automaticamente quando passa de 20 KB.
+- **Caracteres invisíveis seguros.** Usa `U+2800`, `U+3164`, `U+FFA0` —
+  evita ZWSP/ZWJ que viravam `?` e causavam `WinError 123`.
+- **Restauração robusta.** Localiza o atalho por caminho completo,
+  nome atual ou nome invisível, e devolve a extensão original
+  (`.lnk` continua `.lnk`, `.url` continua `.url`).
 
-### Requisitos
-- Windows 10 ou 11
-- Python 3.10+
-- Sem dependências externas
-- Não requer administrador
+---
 
-### Uso
+## 🚀 Uso
+
+### Modo interativo
+
+```bash
+python minimal.py
+```
+
+Menu:
+
+```
+▶ 1 · Ativar     renomeia atalhos para invisível
+■ 2 · Desativar  restaura nomes e limpa inicialização antiga
+↶ 3 · Restaurar  restaura tudo com backup seguro
+× 0 · Sair
+```
+
+### Linha de comando
+
+```bash
+python minimal.py --enable     # aplica
+python minimal.py --disable    # restaura + limpa persistência antiga
+python minimal.py --restore    # restaura
+```
+
+> `--watch` (de versões antigas) agora só remove a entrada antiga de
+> inicialização e encerra.
+
+---
+
+## 📁 Arquivos gerados
+
+Tudo fica na **mesma pasta do script**:
+
+| Arquivo                | Quando aparece                                |
+|------------------------|-----------------------------------------------|
+| `backup.json`          | Sempre — guarda nome/extensão original        |
+| `minimal_<uid>.log`    | Apenas em caso de erro ou conflito (≤ 20 KB)  |
+
+Nada é gravado no registro do Windows, em `AppData`, na Startup ou no
+Agendador de Tarefas.
+
+---
+
+## 🩹 Já tinha uma versão antiga com persistência?
+
+Se uma versão anterior deixou algo iniciando com o Windows, limpe
+manualmente (PowerShell):
 
 ```powershell
-py -3 .\minimal.py             # menu interativo
-py -3 .\minimal.py --enable    # aplica + ativa persistência
-py -3 .\minimal.py --disable   # restaura + remove persistência
-py -3 .\minimal.py --restore   # restaura + remove persistência
+# Registry Run
+Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'MinimalDesktopTweak' -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'Minimal' -ErrorAction SilentlyContinue
+
+# Pasta Startup
+Remove-Item "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\minimal.lnk" -ErrorAction SilentlyContinue
+
+# Tarefas agendadas
+schtasks /Delete /TN "Minimal" /F 2>$null
+schtasks /Delete /TN "MinimalRenamer" /F 2>$null
 ```
 
-### Menu
-- `1` Ativar — aplica nomes invisíveis e liga persistência
-- `2` Desativar — remove persistência e restaura nomes
-- `3` Restaurar — restaura tudo e remove persistência
-- `0` Sair
-
-### Como funciona
-- Usa `U+200B`, `U+200C` e `U+200D` (zero-width) em combinações únicas por atalho.
-- Suporta `.lnk`, `.url`, `.appref-ms` em Desktop do usuário, Public Desktop e OneDrive Desktop.
-- Backup obrigatório em `backup.json`; se falhar, nada é aplicado.
-- Preserva o ícone original: ao renomear `.lnk`, reescreve `IconLocation` apontando para o executável-alvo via `IShellLinkW` (corrige ícone branco). Operação silenciosa.
-- Persistência: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` → executa `--watch` via `pythonw.exe`.
-- Watcher: verifica novos atalhos a cada 30s e aplica automaticamente. Consumo de RAM mínimo.
-
-### Arquivos gerados (mesma pasta do script)
-```
-minimal.py
-backup.json
-minimal_<id>.log
-```
-`<id>` = hash de 8 caracteres de `USERNAME@COMPUTERNAME`.
-
-### Segurança
-- Não altera o alvo dos atalhos.
-- Restauração limpa o backup.
-- Sem privilégios de administrador.
+Em seguida rode `python minimal.py` → opção **3 (Restaurar)** para
+voltar os nomes originais.
 
 ---
 
-## EN-US
+## ❓ FAQ
 
-Renames Windows Desktop shortcuts using zero-width invisible characters, without moving icons.
+**O ícone vai sumir / virar branco?**
+Não. Esta versão não toca em `IconLocation` nem dispara
+`SHChangeNotify(ASSOCCHANGED)`. O `rename` preserva o file id NTFS, então
+o Explorer mantém o ícone em cache.
 
-### Requirements
-- Windows 10 or 11
-- Python 3.10+
-- No external dependencies
-- No administrator required
+**Atalhos novos no Desktop são renomeados sozinhos?**
+Não. Rode `--enable` (ou opção **1**) quando quiser aplicar.
 
-### Usage
+**Funciona em OneDrive / Public Desktop?**
+Sim, os três caminhos padrão (`USERPROFILE\Desktop`, `PUBLIC\Desktop`,
+`OneDrive\Desktop`) são varridos.
 
-```powershell
-py -3 .\minimal.py             # interactive menu
-py -3 .\minimal.py --enable    # apply + enable persistence
-py -3 .\minimal.py --disable   # restore + remove persistence
-py -3 .\minimal.py --restore   # restore + remove persistence
-```
-
-### Menu
-- `1` Enable — apply invisible names and enable persistence
-- `2` Disable — remove persistence and restore names
-- `3` Restore — restore all and remove persistence
-- `0` Exit
-
-### How it works
-- Uses `U+200B`, `U+200C`, `U+200D` (zero-width) in unique combinations per shortcut.
-- Supports `.lnk`, `.url`, `.appref-ms` in user Desktop, Public Desktop and OneDrive Desktop.
-- Mandatory backup at `backup.json`; if it fails, nothing is applied.
-- Preserves original icon: when renaming `.lnk`, rewrites `IconLocation` to point at the target executable via `IShellLinkW` (fixes white/blank icons). Silent operation.
-- Persistence: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` → runs `--watch` through `pythonw.exe`.
-- Watcher: scans for new shortcuts every 30s and applies automatically. Minimal RAM usage.
-
-### Generated files (same folder as the script)
-```
-minimal.py
-backup.json
-minimal_<id>.log
-```
-`<id>` = 8-char hash of `USERNAME@COMPUTERNAME`.
-
-### Safety
-- Does not change shortcut targets.
-- Restore clears the backup.
-- No admin privileges required.
+**Requer admin?**
+Não.
 
 ---
 
-## License
-Free use on your own machine. Review the code before running.
+## 🛡️ Segurança
+
+- Sem rede, sem download, sem subprocess.
+- Sem alterações no registro além de **remover** chaves antigas.
+- `backup.json` é local e legível; pode inspecionar antes de restaurar.
+
+---
+
+## 📜 Licença
+
+Uso pessoal. Sem garantias.
