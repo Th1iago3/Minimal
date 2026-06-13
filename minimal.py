@@ -37,7 +37,6 @@ LOG_MAX_BYTES = 20 * 1024
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 RUN_NAME = "MinimalDesktopTweak"
 
-# Blanks validos no Windows (sem ZWSP/ZWJ que viram '?').
 INVISIBLE_CHARS = ["\u2800", "\u3164", "\uFFA0"]
 LEGACY_INVISIBLE_CHARS = {"\u200B", "\u200C", "\u200D", "\u2060", "\uFEFF"}
 ALL_INVISIBLE_CHARS = set(INVISIBLE_CHARS) | LEGACY_INVISIBLE_CHARS
