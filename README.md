@@ -1,9 +1,5 @@
 # Minimal v1.5
 
-Clean up your Windows Desktop by renaming shortcuts with invisible names while keeping icons and layout intact.
-
-No admin rights. No external dependencies. No background services.
-
 ---
 
 # 🇧🇷 Português
