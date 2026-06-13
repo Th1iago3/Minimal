@@ -175,7 +175,6 @@ L = LANGS[detect_lang()]
 
 
 # ----------------------------- Logging -----------------------------
-# erro/conflito real (warning/error/exception).
 
 _logger: logging.Logger | None = None
 _file_handler: logging.FileHandler | None = None
@@ -205,8 +204,7 @@ def setup_logging() -> None:
     _logger = logging.getLogger("minimal")
     _logger.setLevel(logging.INFO)
     _logger.handlers.clear()
-    # Console handler: somente warnings+ aparecem (silencioso por padrao)
-    sh = logging.StreamHandler(sys.stderr)
+    sh = logging.StreamHandler(sys.stderr)     # Console handler
     sh.setLevel(logging.WARNING)
     sh.setFormatter(logging.Formatter(f"{C.DIM}[%(levelname)s]{C.RESET} %(message)s"))
     _logger.addHandler(sh)
@@ -214,7 +212,6 @@ def setup_logging() -> None:
 
 
 def _ensure_file_handler() -> None:
-    """Anexa handler de arquivo sob demanda (em caso de erro)."""
     global _file_handler
     if not _logger or _file_handler:
         return
@@ -777,7 +774,6 @@ def ensure_backup(shortcuts: list[Path], position_snapshot: dict[str, dict[str, 
             _set_entry_position(existing, _position_for(position_snapshot, sc))
             continue
         if is_invisible_name(sc.stem) or failed_temp_invisible_stem(sc.stem):
-            # Ja invisivel sem backup confiavel: nao inventa nome.
             continue
         items[backup_key(sc)] = {
             "original_name": safe_restore_stem(sc.stem),
@@ -1127,7 +1123,7 @@ def restore_tweak() -> None:
 
 
 
-# ----------------------------- Persistence (remove only) -----------------------------
+# ----------------------------- Persistence -----------------------------
 
 
 def _winreg():
