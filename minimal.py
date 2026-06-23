@@ -338,7 +338,7 @@ def restaurar_tweak():
             if novo_caminho == caminho_real:
                 continue
                 
-            if os.path.exists(novo_caminho):ccccc  vvc ddte ddget dgdte dçlkçlkçlaksdçlkasdçlaksdçalskdaçsldkaçsldkçalskdçasldkaçsldkaçslkdasçldkasçlkdsçldçkçlsadkhjdueddedeee   nufrnufnueffffffff f f cvbvcb
+            if os.path.exists(novo_caminho):
                 i = 2
                 while os.path.exists(novo_caminho):
                     novo_caminho = os.path.join(pasta, f"{nome_original} ({i}){extensao}")
