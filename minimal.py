@@ -81,16 +81,19 @@ T = TRADUCOES[IDIOMA_ATUAL]
 def limpar_terminal():
     os.system("cls" if os.name == "nt" else "clear")
 
-# ----------------------------- cabecalho -----------------------------
-def mostrar_cabecalho():
-    limpar_terminal()
-    print()
+# ----------------------------- logo -----------------------------
+def logo():
     print("    ███╗   ███╗ ██╗ ███╗   ██╗ ██╗ ███╗   ███╗  █████╗  ██╗     ")
     print("    ████╗ ████║ ██║ ████╗  ██║ ██║ ████╗ ████║ ██╔══██╗ ██║     ")
     print("    ██╔████╔██║ ██║ ██╔██╗ ██║ ██║ ██╔████╔██║ ███████║ ██║     ")
     print("    ██║╚██╔╝██║ ██║ ██║╚██╗██║ ██║ ██║╚██╔╝██║ ██╔══██║ ██║     ")
     print("    ██║ ╚═╝ ██║ ██║ ██║ ╚████║ ██║ ██║ ╚═╝ ██║ ██║  ██║ ███████╗")
     print("    ╚═╝     ╚═╝ ╚═╝ ╚═╝  ╚═══╝ ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝ ╚══════╝")
+# ----------------------------- cabecalho -----------------------------
+def mostrar_cabecalho():
+    limpar_terminal()
+    print()
+    logo()
     print(f"    {COR_DIM}{COR_MAGENTA}{T['titulo']}{COR_RESET}")
     print(f"    {COR_CINZA}{'─' * 62}{COR_RESET}")
     print(f"    {COR_DIM}v{VERSAO}  ·  {IDIOMA_ATUAL}{COR_RESET}")
