@@ -238,7 +238,7 @@ def garantir_backup(atalhos):
     linha_info(f"{T['backup_salvo']} {ARQUIVO_BACKUP}")
     return dados
 
-# ----------------------------- aplicar tweak -----------------------------
+# ----------------------------- aplicar -----------------------------
 def aplicar_tweak():
     atalhos = listar_atalhos()
     dados = garantir_backup(atalhos)
@@ -305,7 +305,7 @@ def aplicar_tweak():
     print()
     linha_info(T["concluido"])
 
-# ----------------------------- restaurar tweak -----------------------------
+# ----------------------------- restaurar ----------------------------- 
 def restaurar_tweak():
     dados = carregar_backup()
     itens = dados.get("itens", {})
@@ -338,7 +338,7 @@ def restaurar_tweak():
             if novo_caminho == caminho_real:
                 continue
                 
-            if os.path.exists(novo_caminho):
+            if os.path.exists(novo_caminho):ccccc  vvc ddte ddget dgdte dçlkçlkçlaksdçlkasdçlaksdçalskdaçsldkaçsldkçalskdçasldkaçsldkaçslkdasçldkasçlkdsçldçkçlsadkhjdueddedeee   nufrnufnueffffffff f f cvbvcb
                 i = 2
                 while os.path.exists(novo_caminho):
                     novo_caminho = os.path.join(pasta, f"{nome_original} ({i}){extensao}")
@@ -354,7 +354,7 @@ def restaurar_tweak():
     print()
     linha_info(T["concluido"])
 
-# ----------------------------- programa principal -----------------------------
+# ----------------------------- principal -----------------------------
 def principal():
     if os.name != "nt":
         print("Apenas para Windows.")
